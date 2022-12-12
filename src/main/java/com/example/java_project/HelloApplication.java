@@ -18,19 +18,19 @@ public class HelloApplication extends Application
     GridPane root = new GridPane();
 
     //Encrypt Area
-    Label labelEncrypt = new Label("Encrypt");
-    Button browseEncrypt = new Button("Browse");
-    Button encrypt = new Button("Encrypt");
+    Label labelEncrypt = new Label();
+    Button browseEncrypt = new Button();
+    Button encrypt = new Button();
     TextField keyEncrypt = new TextField();
     ImageView encryptImage = new ImageView();
 
     //Decrypt Area
-    Label labelDecrypt = new Label("Decrypt");
-    Button browseDecrypt = new Button("Browse");
+    Label labelDecrypt = new Label();
+    Button browseDecrypt = new Button();
     Button decrypt = new Button();
     TextField keyDecrypt = new TextField();
-    Button save = new Button("Save");
-    ImageView decryptImage = new ImageView("Decrypt");
+    Button save = new Button();
+    ImageView decryptImage = new ImageView();
 
     @Override
     public void start(Stage stage) throws IOException
@@ -50,23 +50,26 @@ public class HelloApplication extends Application
         //Set The Whole Encrypt Portion
         //Label Properties
         root.add(labelEncrypt, 20, 400);
+        labelEncrypt.setText("Encrypt");
         //TextBox Properties
         root.add(keyEncrypt, 20, 800);
         //Button1 Properties
         root.add(browseEncrypt, 500, 800);
         //Button2 Properties
-        root.add(encrypt, 500, 900);
-
+        browseEncrypt.setText("Browse");
+        encrypt.setText("Encrypt");
 
         //Set The Whole Encrypt Portion
         //Label Properties
         root.add(labelDecrypt, 900, 400);
-
+        labelDecrypt.setText("Decrypt");
         //TextBox Properties
         root.add(keyDecrypt, 800, 800);
         //Button1 Properties
         root.add(browseDecrypt, 600, 800);
+        browseDecrypt.setText("Browse");
         //Button2 Properties
+        decrypt.setText("Decrypt");
     }
 
     public static void main(String[] args)
