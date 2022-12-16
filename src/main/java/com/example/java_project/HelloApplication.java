@@ -51,6 +51,7 @@ public class HelloApplication extends Application
     File fileDecrypt;
     String f2;
     int keyD;
+    Image img2;
 
     @Override
     public void start(Stage stage) throws IOException
@@ -88,11 +89,19 @@ public class HelloApplication extends Application
             @Override
             public void handle(ActionEvent actionEvent)
             {
-                chooseEncrypt.getExtensionFilters().addAll(new ExtensionFilter("jpg", "*jpg"));
+                chooseEncrypt.getExtensionFilters().addAll(new ExtensionFilter("Image", "*jpg", "*png"));
                 fileEncrypt = chooseEncrypt.showOpenDialog(stage);
                 f1 = fileEncrypt.toString();
+                Dialog<String> d = new Dialog<String>();
+                d.setTitle("Success");
+                d.setContentText("Image Is Successfully Imported");
+                d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                d.show();
                 encrypt.setDisable(false);
-                img1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(f1)));
+                //E:\College\Year 3\First Term\Advanced Programming
+                encryptImage.setFitWidth(300);
+                encryptImage.setFitHeight(300);
+                img1 = new Image(f1);
                 encryptImage.setImage(img1);
             }
         });
@@ -114,13 +123,14 @@ public class HelloApplication extends Application
                         d.setTitle("No Key");
                         d.setContentText("You Must Enter The Key First Before Encryption");
                         d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                        d.show();
                     }
 
                     else
                     {
                         keyE = Integer.parseInt(keyEncrypt.getText());
-
                         encrypt(keyE);
+                        encryptImage.setImage(null);
                     }
                 }
 
@@ -149,10 +159,14 @@ public class HelloApplication extends Application
             @Override
             public void handle(ActionEvent actionEvent)
             {
-                chooseDecrypt.getExtensionFilters().addAll(new ExtensionFilter("jpg", "*jpg"));
-                chooseDecrypt.getExtensionFilters().addAll(new ExtensionFilter("png", "*png"));
+                chooseDecrypt.getExtensionFilters().addAll(new ExtensionFilter("Image", "*jpg", "*png"));
                 fileDecrypt = chooseDecrypt.showOpenDialog(stage);
                 f2 = fileDecrypt.toString();
+                Dialog<String> d = new Dialog<String>();
+                d.setTitle("Success");
+                d.setContentText("Encrypted Image Is Successfully Imported");
+                d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                d.show();
                 decrypt.setDisable(false);
             }
         });
@@ -174,13 +188,13 @@ public class HelloApplication extends Application
                         d.setTitle("No Key");
                         d.setContentText("You Must Enter The Key First Before Decryption");
                         d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                        d.show();
                     }
 
                     else
                     {
                         keyD = Integer.parseInt(keyDecrypt.getText());
-
-                        encrypt(keyD);
+                        decrypt(keyD);
                     }
                 }
 
@@ -222,10 +236,47 @@ public class HelloApplication extends Application
         d.setTitle("Success");
         d.setContentText("Encryption is Successful");
         d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        d.show();
+
+        encrypt.setDisable(true);
+
+        keyEncrypt.clear();
     }
 
     public void decrypt(int key) throws IOException
     {
+        FileInputStream fis = new FileInputStream(fileDecrypt);
 
+        byte data[] = new byte[fis.available()];
+
+        fis.read(data);
+        int i = 0;
+
+        for(byte b : data)
+        {
+            data[i] = (byte)(b ^ key);
+            i++;
+        }
+
+        FileOutputStream fos = new FileOutputStream(fileDecrypt);
+
+        fos.write(data);
+        fos.close();
+        fis.close();
+
+        Dialog<String> d = new Dialog<String>();
+        d.setTitle("Success");
+        d.setContentText("Decryption is Successful");
+        d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        d.show();
+
+        decryptImage.setFitWidth(300);
+        decryptImage.setFitHeight(300);
+        img2 = new Image(f2);
+        decryptImage.setImage(img2);
+
+        decrypt.setDisable(true);
+
+        keyDecrypt.clear();
     }
 }
