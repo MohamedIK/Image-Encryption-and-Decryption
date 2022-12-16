@@ -3,11 +3,10 @@ package com.example.java_project;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -20,23 +19,29 @@ import javafx.stage.Stage;
 import java.io.*;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class HelloApplication extends Application
 {
-    GridPane root = new GridPane();
+    Stage window;
+
+    ImageView imgView = new ImageView();
+
+    Image img;
+
+    File file;
+    String f;
+
+    int key;
+
+    GridPane grid = new GridPane();
 
     //Encrypt Objects
     Label labelEncrypt = new Label();
     Button browseEncrypt = new Button();
     Button encrypt = new Button();
-    TextField keyEncrypt = new TextField();
-    ImageView encryptImage = new ImageView();
+    TextField keyncrypt = new TextField();
     FileChooser chooseEncrypt = new FileChooser();
-    File fileEncrypt;
-    String f1;
-    int keyE;
-    Image img1;
+    
 
     ////////////////////////////////////////////
 
@@ -44,14 +49,9 @@ public class HelloApplication extends Application
     Label labelDecrypt = new Label();
     Button browseDecrypt = new Button();
     Button decrypt = new Button();
-    TextField keyDecrypt = new TextField();
+    TextField keycrypt = new TextField();
     Button save = new Button();
-    ImageView decryptImage = new ImageView();
     FileChooser chooseDecrypt = new FileChooser();
-    File fileDecrypt;
-    String f2;
-    int keyD;
-    Image img2;
 
     @Override
     public void start(Stage stage) throws IOException
@@ -62,27 +62,35 @@ public class HelloApplication extends Application
         stage.setScene(scene);
         stage.show();*/
 
-        //Set The Dimensions of The Whole grid
-        Scene scene = new Scene(root, 1000, 800);
-        stage.setTitle("Image Encryptor and Decryptor");
-        stage.setScene(scene);
-        stage.show();
+        window = stage;
+        window.setTitle("File Encrypt and Decrypt");
+
+        //Grid layout
+        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setHgap(10);
+        grid.setVgap(8);
+
+        //Image properties
+        GridPane.setConstraints(imgView, 1, 4);
+
+        //Set The Dimensions of The Whole scene
+        //Scene scene = new Scene(grid, 1000, 800);
+        //stage.setTitle("Image Encryptor and Decryptor");
+        //stage.setScene(scene);
+        //stage.show();
 
         ////////////////////////////////////////////
 
         //Set The Whole Encrypt Portion
         //Label Properties
-        root.add(labelEncrypt, 20, 400);
+        GridPane.setConstraints(labelEncrypt, 0, 0);
         labelEncrypt.setText("Encrypt");
 
-        //Image properties
-        root.add(encryptImage, 40, 900);
-
         //TextBox Properties
-        root.add(keyEncrypt, 20, 800);
+        GridPane.setConstraints(keyncrypt, 0, 1);
 
         //Button1 Properties
-        root.add(browseEncrypt, 500, 800);
+        GridPane.setConstraints(browseEncrypt, 1, 1);
         browseEncrypt.setText("Browse");
         browseEncrypt.setOnAction(new EventHandler<ActionEvent>()
         {
@@ -90,8 +98,8 @@ public class HelloApplication extends Application
             public void handle(ActionEvent actionEvent)
             {
                 chooseEncrypt.getExtensionFilters().addAll(new ExtensionFilter("Image", "*jpg", "*png"));
-                fileEncrypt = chooseEncrypt.showOpenDialog(stage);
-                f1 = fileEncrypt.toString();
+                file = chooseEncrypt.showOpenDialog(stage);
+                f = file.toString();
                 Dialog<String> d = new Dialog<String>();
                 d.setTitle("Success");
                 d.setContentText("Image Is Successfully Imported");
@@ -99,15 +107,15 @@ public class HelloApplication extends Application
                 d.show();
                 encrypt.setDisable(false);
                 //E:\College\Year 3\First Term\Advanced Programming
-                encryptImage.setFitWidth(300);
-                encryptImage.setFitHeight(300);
-                img1 = new Image(f1);
-                encryptImage.setImage(img1);
+                imgView.setFitWidth(300);
+                imgView.setFitHeight(300);
+                img = new Image(f);
+                imgView.setImage(img);
             }
         });
 
         //Button2 Properties
-        root.add(encrypt, 500, 900);
+        GridPane.setConstraints(encrypt, 1, 0);
         encrypt.setText("Encrypt");
         encrypt.setDisable(true);
         encrypt.setOnAction(new EventHandler<ActionEvent>()
@@ -117,7 +125,7 @@ public class HelloApplication extends Application
             {
                 try
                 {
-                    if(keyEncrypt.getText().isEmpty() || keyEncrypt.getText().isBlank())
+                    if(keyncrypt.getText().isEmpty() || keyncrypt.getText().isBlank())
                     {
                         Dialog<String> d = new Dialog<String>();
                         d.setTitle("No Key");
@@ -128,9 +136,9 @@ public class HelloApplication extends Application
 
                     else
                     {
-                        keyE = Integer.parseInt(keyEncrypt.getText());
-                        encrypt(keyE);
-                        encryptImage.setImage(null);
+                        key = Integer.parseInt(keyncrypt.getText());
+                        encrypt(key);
+                        imgView.setImage(null);
                     }
                 }
 
@@ -145,14 +153,14 @@ public class HelloApplication extends Application
 
         //Set The Whole Decrypt Portion
         //Label Properties
-        root.add(labelDecrypt, 900, 400);
+        GridPane.setConstraints(labelDecrypt, 10, 0);
         labelDecrypt.setText("Decrypt");
 
         //TextBox Properties
-        root.add(keyDecrypt, 800, 800);
+        GridPane.setConstraints(keycrypt, 7, 1);
 
         //Button1 Properties
-        root.add(browseDecrypt, 600, 800);
+        GridPane.setConstraints(browseDecrypt, 10, 1);
         browseDecrypt.setText("Browse");
         browseDecrypt.setOnAction(new EventHandler<ActionEvent>()
         {
@@ -160,8 +168,8 @@ public class HelloApplication extends Application
             public void handle(ActionEvent actionEvent)
             {
                 chooseDecrypt.getExtensionFilters().addAll(new ExtensionFilter("Image", "*jpg", "*png"));
-                fileDecrypt = chooseDecrypt.showOpenDialog(stage);
-                f2 = fileDecrypt.toString();
+                file = chooseDecrypt.showOpenDialog(stage);
+                f = file.toString();
                 Dialog<String> d = new Dialog<String>();
                 d.setTitle("Success");
                 d.setContentText("Encrypted Image Is Successfully Imported");
@@ -172,7 +180,7 @@ public class HelloApplication extends Application
         });
 
         //Button2 Properties
-        root.add(decrypt, 600, 900);
+        GridPane.setConstraints(decrypt, 7, 1);
         decrypt.setText("Decrypt");
         decrypt.setDisable(true);
         decrypt.setOnAction(new EventHandler<ActionEvent>()
@@ -182,7 +190,7 @@ public class HelloApplication extends Application
             {
                 try
                 {
-                    if(keyDecrypt.getText().isEmpty() || keyDecrypt.getText().isBlank())
+                    if(keycrypt.getText().isEmpty() || keycrypt.getText().isBlank())
                     {
                         Dialog<String> d = new Dialog<String>();
                         d.setTitle("No Key");
@@ -193,8 +201,8 @@ public class HelloApplication extends Application
 
                     else
                     {
-                        keyD = Integer.parseInt(keyDecrypt.getText());
-                        decrypt(keyD);
+                        key = Integer.parseInt(keycrypt.getText());
+                        decrypt(key);
                     }
                 }
 
@@ -205,6 +213,12 @@ public class HelloApplication extends Application
             }
         });
 
+        grid.getChildren().addAll(labelEncrypt, labelDecrypt, browseEncrypt, browseDecrypt, keyncrypt, keycrypt,
+                encrypt, decrypt, imgView);
+
+        Scene scene = new Scene(grid, 800, 800);
+        window.setScene(scene);
+        window.show();
     }
     public static void main(String[] args)
     {
@@ -213,7 +227,7 @@ public class HelloApplication extends Application
 
     public void encrypt(int key) throws IOException
     {
-        FileInputStream fis = new FileInputStream(fileEncrypt);
+        FileInputStream fis = new FileInputStream(file);
 
         byte data[] = new byte[fis.available()];
 
@@ -226,7 +240,7 @@ public class HelloApplication extends Application
             i++;
         }
 
-        FileOutputStream fos = new FileOutputStream(fileEncrypt);
+        FileOutputStream fos = new FileOutputStream(file);
 
         fos.write(data);
         fos.close();
@@ -240,12 +254,12 @@ public class HelloApplication extends Application
 
         encrypt.setDisable(true);
 
-        keyEncrypt.clear();
+        keyncrypt.clear();
     }
 
     public void decrypt(int key) throws IOException
     {
-        FileInputStream fis = new FileInputStream(fileDecrypt);
+        FileInputStream fis = new FileInputStream(file);
 
         byte data[] = new byte[fis.available()];
 
@@ -258,7 +272,7 @@ public class HelloApplication extends Application
             i++;
         }
 
-        FileOutputStream fos = new FileOutputStream(fileDecrypt);
+        FileOutputStream fos = new FileOutputStream(file);
 
         fos.write(data);
         fos.close();
@@ -270,13 +284,13 @@ public class HelloApplication extends Application
         d.getDialogPane().getButtonTypes().add(ButtonType.OK);
         d.show();
 
-        decryptImage.setFitWidth(300);
-        decryptImage.setFitHeight(300);
-        img2 = new Image(f2);
-        decryptImage.setImage(img2);
+        imgView.setFitWidth(300);
+        imgView.setFitHeight(300);
+        img = new Image(f);
+        imgView.setImage(img);
 
         decrypt.setDisable(true);
 
-        keyDecrypt.clear();
+        keycrypt.clear();
     }
 }
