@@ -4,8 +4,6 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,12 +12,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -73,20 +69,11 @@ public class HelloApplication extends Application
 
         //Grid layout
         grid.setPadding(new Insets(10, 10, 10, 10));
-        //grid.setVgap(8);
-        //grid.setHgap(10);
-
         grid.setVgap(1);
         grid.setHgap(1);
 
         //Image properties
         GridPane.setConstraints(imgView, 5, 10);
-
-        //Set The Dimensions of The Whole scene
-        //Scene scene = new Scene(grid, 1000, 800);
-        //stage.setTitle("Image Encryptor and Decryptor");
-        //stage.setScene(scene);
-        //stage.show();
 
         ////////////////////////////////////////////
 
