@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,8 +14,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -23,6 +29,8 @@ import java.io.IOException;
 public class HelloApplication extends Application
 {
     Stage window;
+
+    Font fontLabel = Font.font("Arial", FontWeight.BLACK, 18);
 
     ImageView imgView = new ImageView();
 
@@ -36,21 +44,19 @@ public class HelloApplication extends Application
     GridPane grid = new GridPane();
 
     //Encrypt Objects
-    Label labelEncrypt = new Label();
+    Label labelEncrypt = new Label("Encrypt");
     Button browseEncrypt = new Button();
     Button encrypt = new Button();
-    TextField keyncrypt = new TextField();
+    TextField keyEncrypt = new TextField();
     FileChooser chooseEncrypt = new FileChooser();
-    
 
     ////////////////////////////////////////////
 
     //Decrypt Objects
-    Label labelDecrypt = new Label();
+    Label labelDecrypt = new Label("Decrypt");
     Button browseDecrypt = new Button();
     Button decrypt = new Button();
-    TextField keycrypt = new TextField();
-    Button save = new Button();
+    TextField keyDecrypt = new TextField();
     FileChooser chooseDecrypt = new FileChooser();
 
     @Override
@@ -67,11 +73,14 @@ public class HelloApplication extends Application
 
         //Grid layout
         grid.setPadding(new Insets(10, 10, 10, 10));
-        grid.setHgap(10);
-        grid.setVgap(8);
+        //grid.setVgap(8);
+        //grid.setHgap(10);
+
+        grid.setVgap(1);
+        grid.setHgap(1);
 
         //Image properties
-        GridPane.setConstraints(imgView, 1, 4);
+        GridPane.setConstraints(imgView, 5, 10);
 
         //Set The Dimensions of The Whole scene
         //Scene scene = new Scene(grid, 1000, 800);
@@ -84,10 +93,11 @@ public class HelloApplication extends Application
         //Set The Whole Encrypt Portion
         //Label Properties
         GridPane.setConstraints(labelEncrypt, 0, 0);
-        labelEncrypt.setText("Encrypt");
+        labelEncrypt.setFont(fontLabel);
 
         //TextBox Properties
-        GridPane.setConstraints(keyncrypt, 0, 1);
+        GridPane.setConstraints(keyEncrypt, 0, 1);
+        keyEncrypt.setPromptText("Enter Key To Encrypt");
 
         //Button1 Properties
         GridPane.setConstraints(browseEncrypt, 1, 1);
@@ -107,15 +117,15 @@ public class HelloApplication extends Application
                 d.show();
                 encrypt.setDisable(false);
                 //E:\College\Year 3\First Term\Advanced Programming
-                imgView.setFitWidth(300);
-                imgView.setFitHeight(300);
+                imgView.setFitWidth(400);
+                imgView.setFitHeight(400);
                 img = new Image(f);
                 imgView.setImage(img);
             }
         });
 
         //Button2 Properties
-        GridPane.setConstraints(encrypt, 1, 0);
+        GridPane.setConstraints(encrypt, 1, 2);
         encrypt.setText("Encrypt");
         encrypt.setDisable(true);
         encrypt.setOnAction(new EventHandler<ActionEvent>()
@@ -125,7 +135,7 @@ public class HelloApplication extends Application
             {
                 try
                 {
-                    if(keyncrypt.getText().isEmpty() || keyncrypt.getText().isBlank())
+                    if(keyEncrypt.getText().isEmpty() || keyEncrypt.getText().isBlank())
                     {
                         Dialog<String> d = new Dialog<String>();
                         d.setTitle("No Key");
@@ -136,7 +146,7 @@ public class HelloApplication extends Application
 
                     else
                     {
-                        key = Integer.parseInt(keyncrypt.getText());
+                        key = Integer.parseInt(keyEncrypt.getText());
                         encrypt(key);
                         imgView.setImage(null);
                     }
@@ -153,14 +163,14 @@ public class HelloApplication extends Application
 
         //Set The Whole Decrypt Portion
         //Label Properties
-        GridPane.setConstraints(labelDecrypt, 10, 0);
-        labelDecrypt.setText("Decrypt");
+        GridPane.setConstraints(labelDecrypt, 45, 0);
+        labelDecrypt.setFont(fontLabel);
 
         //TextBox Properties
-        GridPane.setConstraints(keycrypt, 7, 1);
+        GridPane.setConstraints(keyDecrypt, 44, 1);
 
         //Button1 Properties
-        GridPane.setConstraints(browseDecrypt, 10, 1);
+        GridPane.setConstraints(browseDecrypt, 45, 1);
         browseDecrypt.setText("Browse");
         browseDecrypt.setOnAction(new EventHandler<ActionEvent>()
         {
@@ -180,17 +190,16 @@ public class HelloApplication extends Application
         });
 
         //Button2 Properties
-        GridPane.setConstraints(decrypt, 7, 1);
+        GridPane.setConstraints(decrypt, 44, 2);
         decrypt.setText("Decrypt");
         decrypt.setDisable(true);
+        keyDecrypt.setPromptText("Enter Key To Decrypt");
         decrypt.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
             public void handle(ActionEvent actionEvent)
             {
-                try
-                {
-                    if(keycrypt.getText().isEmpty() || keycrypt.getText().isBlank())
+                    if(keyDecrypt.getText().isEmpty() || keyDecrypt.getText().isBlank())
                     {
                         Dialog<String> d = new Dialog<String>();
                         d.setTitle("No Key");
@@ -201,24 +210,44 @@ public class HelloApplication extends Application
 
                     else
                     {
-                        key = Integer.parseInt(keycrypt.getText());
-                        decrypt(key);
-                    }
-                }
+                        Dialog<ButtonType> x = new Dialog<>();
+                        x.setTitle("Check Decrypt Key");
+                        x.setContentText("Please Make Sure That It Is The Correct Key OR The Image Will be Corrupted, " +
+                                "Are You Sure It Is The Correct Key ?");
+                        x.getDialogPane().getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+                        x.showAndWait().ifPresent(response -> {
+                            if(response == ButtonType.YES)
+                            {
+                                key = Integer.parseInt(keyDecrypt.getText());
+                                try
+                                {
+                                    decrypt(key);
+                                }
 
-                catch (IOException e)
-                {
-                    throw new RuntimeException(e);
-                }
+                                catch (IOException e)
+                                {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+
+                            else
+                            {
+                                x.close();
+                            }
+                        });
+                    }
             }
         });
 
-        grid.getChildren().addAll(labelEncrypt, labelDecrypt, browseEncrypt, browseDecrypt, keyncrypt, keycrypt,
+        grid.getChildren().addAll(labelEncrypt, labelDecrypt, browseEncrypt, browseDecrypt, keyEncrypt, keyDecrypt,
                 encrypt, decrypt, imgView);
 
-        Scene scene = new Scene(grid, 800, 800);
+        Scene scene = new Scene(grid, 900, 600);
+
         window.setScene(scene);
         window.show();
+        window.setResizable(true);
+        window.getScene().getWindow().sizeToScene();
     }
     public static void main(String[] args)
     {
@@ -254,7 +283,7 @@ public class HelloApplication extends Application
 
         encrypt.setDisable(true);
 
-        keyncrypt.clear();
+        keyEncrypt.clear();
     }
 
     public void decrypt(int key) throws IOException
@@ -284,13 +313,11 @@ public class HelloApplication extends Application
         d.getDialogPane().getButtonTypes().add(ButtonType.OK);
         d.show();
 
-        imgView.setFitWidth(300);
-        imgView.setFitHeight(300);
+        imgView.setFitWidth(400);
+        imgView.setFitHeight(400);
         img = new Image(f);
         imgView.setImage(img);
-
         decrypt.setDisable(true);
-
-        keycrypt.clear();
+        keyDecrypt.clear();
     }
 }
