@@ -5,23 +5,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.*;
-
 import java.io.IOException;
-
 public class HelloApplication extends Application
 {
     Stage window;
@@ -97,17 +90,29 @@ public class HelloApplication extends Application
                 chooseEncrypt.getExtensionFilters().addAll(new ExtensionFilter("Image", "*jpg", "*png"));
                 file = chooseEncrypt.showOpenDialog(stage);
                 f = file.toString();
-                Dialog<String> d = new Dialog<String>();
-                d.setTitle("Success");
-                d.setContentText("Image Is Successfully Imported");
-                d.getDialogPane().getButtonTypes().add(ButtonType.OK);
-                d.show();
-                encrypt.setDisable(false);
                 //E:\College\Year 3\First Term\Advanced Programming
-                imgView.setFitWidth(400);
-                imgView.setFitHeight(400);
                 img = new Image(f);
-                imgView.setImage(img);
+                if(img.isError())
+                {
+                    Dialog<String> x = new Dialog<String>();
+                    x.setTitle("Error");
+                    x.setContentText("Unsupported Image Format");
+                    x.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    x.show();
+                }
+
+                else
+                {
+                    Dialog<String> d = new Dialog<String>();
+                    d.setTitle("Success");
+                    d.setContentText("Image Is Successfully Imported");
+                    d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    d.show();
+                    imgView.setFitWidth(400);
+                    imgView.setFitHeight(400);
+                    imgView.setImage(img);
+                    encrypt.setDisable(false);
+                }
             }
         });
 
@@ -167,12 +172,26 @@ public class HelloApplication extends Application
                 chooseDecrypt.getExtensionFilters().addAll(new ExtensionFilter("Image", "*jpg", "*png"));
                 file = chooseDecrypt.showOpenDialog(stage);
                 f = file.toString();
-                Dialog<String> d = new Dialog<String>();
-                d.setTitle("Success");
-                d.setContentText("Encrypted Image Is Successfully Imported");
-                d.getDialogPane().getButtonTypes().add(ButtonType.OK);
-                d.show();
-                decrypt.setDisable(false);
+                img = new Image(f);
+
+                if(img.isError())
+                {
+                    Dialog<String> d = new Dialog<String>();
+                    d.setTitle("Success");
+                    d.setContentText("Encrypted Image Is Successfully Imported");
+                    d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    d.show();
+                    decrypt.setDisable(false);
+                }
+
+                else
+                {
+                    Dialog<String> x = new Dialog<String>();
+                    x.setTitle("Error");
+                    x.setContentText("Unsupported Image Format");
+                    x.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    x.show();
+                }
             }
         });
 
