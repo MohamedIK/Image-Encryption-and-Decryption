@@ -36,7 +36,7 @@ public class HelloApplication extends Application
     Label labelEncrypt = new Label("Encrypt");
     Button browseEncrypt = new Button();
     Button encrypt = new Button();
-    TextField keyEncrypt = new TextField();
+    PasswordField keyEncrypt = new PasswordField();
     FileChooser chooseEncrypt = new FileChooser();
 
     ////////////////////////////////////////////
@@ -45,18 +45,12 @@ public class HelloApplication extends Application
     Label labelDecrypt = new Label("Decrypt");
     Button browseDecrypt = new Button();
     Button decrypt = new Button();
-    TextField keyDecrypt = new TextField();
+    PasswordField keyDecrypt = new PasswordField();
     FileChooser chooseDecrypt = new FileChooser();
 
     @Override
     public void start(Stage stage) throws IOException
     {
-        /*FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();*/
-
         window = stage;
         window.setTitle("File Encrypt and Decrypt");
 
@@ -138,9 +132,21 @@ public class HelloApplication extends Application
 
                     else
                     {
-                        key = Integer.parseInt(keyEncrypt.getText());
-                        encrypt(key);
-                        imgView.setImage(null);
+                        if(isInt(keyEncrypt))
+                        {
+                            key = Integer.parseInt(keyEncrypt.getText().replaceAll("\\s", ""));
+                            encrypt(key);
+                            imgView.setImage(null);
+                        }
+
+                        else
+                        {
+                            Dialog<String> d = new Dialog<String>();
+                            d.setTitle("Invalid Character");
+                            d.setContentText("The Key Must Contain Numbers Only");
+                            d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                            d.show();
+                        }
                     }
                 }
 
@@ -205,26 +211,29 @@ public class HelloApplication extends Application
             @Override
             public void handle(ActionEvent actionEvent)
             {
-                    if(keyDecrypt.getText().isEmpty() || keyDecrypt.getText().isBlank())
-                    {
-                        Dialog<String> d = new Dialog<String>();
-                        d.setTitle("No Key");
-                        d.setContentText("You Must Enter The Key First Before Decryption");
-                        d.getDialogPane().getButtonTypes().add(ButtonType.OK);
-                        d.show();
-                    }
+                if(keyDecrypt.getText().isEmpty() || keyDecrypt.getText().isBlank())
+                {
+                    Dialog<String> d = new Dialog<String>();
+                    d.setTitle("No Key");
+                    d.setContentText("You Must Enter The Key First Before Decryption");
+                    d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    d.show();
+                }
 
-                    else
+                else
+                {
+                    if(isInt(keyDecrypt))
                     {
                         Dialog<ButtonType> x = new Dialog<>();
                         x.setTitle("Check Decrypt Key");
                         x.setContentText("Please Make Sure That It Is The Correct Key OR The Image Will be Corrupted, " +
-                                "Are You Sure It Is The Correct Key ?");
+                                "Are You Sure That It Is The Correct Key ?");
                         x.getDialogPane().getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
                         x.showAndWait().ifPresent(response -> {
                             if(response == ButtonType.YES)
                             {
-                                key = Integer.parseInt(keyDecrypt.getText());
+                                key = Integer.parseInt(keyDecrypt.getText().replaceAll("\\s", ""));
+
                                 try
                                 {
                                     decrypt(key);
@@ -242,6 +251,16 @@ public class HelloApplication extends Application
                             }
                         });
                     }
+
+                    else
+                    {
+                        Dialog<String> d = new Dialog<String>();
+                        d.setTitle("Invalid Character");
+                        d.setContentText("The Key Must Contain Numbers Only");
+                        d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                        d.show();
+                    }
+                }
             }
         });
 
@@ -258,6 +277,19 @@ public class HelloApplication extends Application
     public static void main(String[] args)
     {
         launch();
+    }
+
+    public boolean isInt(PasswordField pf)
+    {
+        try
+        {
+            Integer.parseInt(pf.getText());
+            return true;
+        }
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 
     public void encrypt(int key) throws IOException
