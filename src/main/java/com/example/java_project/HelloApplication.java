@@ -226,8 +226,7 @@ public class HelloApplication extends Application
                     {
                         Dialog<ButtonType> x = new Dialog<>();
                         x.setTitle("Check Decrypt Key");
-                        x.setContentText("Please Make Sure That It Is The Correct Key OR The Image Will be Corrupted, " +
-                                "Are You Sure That It Is The Correct Key ?");
+                        x.setContentText("Are You Sure That It Is The Correct Key ?");
                         x.getDialogPane().getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
                         x.showAndWait().ifPresent(response -> {
                             if(response == ButtonType.YES)
@@ -273,6 +272,7 @@ public class HelloApplication extends Application
         window.show();
         window.setResizable(true);
         window.getScene().getWindow().sizeToScene();
+        window.setResizable(false);
     }
     public static void main(String[] args)
     {
@@ -345,17 +345,55 @@ public class HelloApplication extends Application
         fos.close();
         fis.close();
 
-        Dialog<String> d = new Dialog<String>();
-        d.setTitle("Success");
-        d.setContentText("Decryption is Successful");
-        d.getDialogPane().getButtonTypes().add(ButtonType.OK);
-        d.show();
-
-        imgView.setFitWidth(400);
-        imgView.setFitHeight(400);
         img = new Image(f);
-        imgView.setImage(img);
-        decrypt.setDisable(true);
-        keyDecrypt.clear();
+
+        if(img.isError())
+        {
+            Dialog<String> x = new Dialog<String>();
+            x.setTitle("Error");
+            x.setContentText("Decryption Failed. You May Have Entered Wrong Decryption Key, please Try Again");
+            x.getDialogPane().getButtonTypes().add(ButtonType.OK);
+            x.show();
+            repair_decrypt(key);
+            keyDecrypt.clear();
+        }
+
+        else
+        {
+            Dialog<String> d = new Dialog<String>();
+            d.setTitle("Success");
+            d.setContentText("Decryption is Successful");
+            d.getDialogPane().getButtonTypes().add(ButtonType.OK);
+            d.show();
+
+            imgView.setFitWidth(400);
+            imgView.setFitHeight(400);
+
+            imgView.setImage(img);
+            decrypt.setDisable(true);
+            keyDecrypt.clear();
+        }
+    }
+
+    public void repair_decrypt(int key) throws IOException
+    {
+        FileInputStream fis = new FileInputStream(file);
+
+        byte data[] = new byte[fis.available()];
+
+        fis.read(data);
+        int i = 0;
+
+        for(byte b : data)
+        {
+            data[i] = (byte)(b ^ key);
+            i++;
+        }
+
+        FileOutputStream fos = new FileOutputStream(file);
+
+        fos.write(data);
+        fos.close();
+        fis.close();
     }
 }
