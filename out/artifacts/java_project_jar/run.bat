@@ -1,1 +1,0 @@
-java -jar java_project.jar
